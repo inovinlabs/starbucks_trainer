@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shift Tasks - Starbucks Training Reference</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f7f7f7 0%, #e8f5e8 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #006241 0%, #00824f 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0,98,65,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .nav-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .nav-btn {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .nav-btn.active {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            color: #006241;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .shift-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .shift-btn {
+            padding: 1rem 2rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 180px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .shift-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .shift-btn.active {
+            background: linear-gradient(135deg, #006241, #00824f);
+            color: white;
+            border-color: #006241;
+            box-shadow: 0 8px 24px rgba(0,98,65,0.3);
+        }
+        
+        .shift-content {
+            display: none;
+        }
+        
+        .shift-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .task-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .task-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .task-section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .section-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #006241, #00824f);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #006241;
+        }
+        
+        .task-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f5f5f5;
+            transition: all 0.3s ease;
+        }
+        
+        .task-item:last-child {
+            border-bottom: none;
+        }
+        
+        .task-item:hover {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #006241;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .task-checkbox:hover {
+            background: #f0f8f0;
+            transform: scale(1.1);
+        }
+        
+        .task-checkbox.checked {
+            background: #006241;
+            color: white;
+        }
+        
+        .task-checkbox.checked::after {
+            content: '✓';
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .task-text {
+            flex-grow: 1;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        
+        .task-time {
+            font-size: 0.8rem;
+            color: #666;
+            background: #f0f0f0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        
+        .progress-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(20px);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .progress-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #006241;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 50px;
+            height: 20px;
+            margin: 1rem 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #006241, #00824f);
+            height: 100%;
+            border-radius: 50px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .progress-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #006241;
+        }
+        
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #006241;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .timer-alerts {
+            background: linear-gradient(135deg, #fff3e0, #ffecb3);
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .timer-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #f57c00;
+        }
+        
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .timer-item {
+            background: rgba(255,255,255,0.7);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .timer-name {
+            font-weight: 600;
+            color: #e65100;
+            margin-bottom: 0.25rem;
+        }
+        
+        .timer-interval {
+            font-size: 0.9rem;
+            color: #f57c00;
+        }
+        
+        .back-to-recipes {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #006241, #00824f);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,98,65,0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .back-to-recipes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,98,65,0.5);
+        }
+        
+        @media (max-width: 768px) {
+            .shift-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .shift-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .task-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .timer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>📋 Shift Tasks</h1>
+            <div class="nav-controls">
+                <a href="index.html" class="nav-btn">☕ Recipes</a>
+                <a href="shift-tasks.html" class="nav-btn active">📋 Shift Tasks</a>
+                <a href="#" class="nav-btn">⭐ Favorites</a>
+                <a href="#" class="nav-btn">❓ Help</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">📋 Shift Task Manager</h1>
+            <p class="page-subtitle">Stay organized with comprehensive task lists for opening, midday operations, and closing procedures</p>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-header">📊 Daily Progress</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="overallProgress" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+            <div class="progress-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalTasks">0</div>
+                    <div class="stat-label">Total Tasks</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="completedTasks">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="remainingTasks">0</div>
+                    <div class="stat-label">Remaining</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timer-alerts">
+            <div class="timer-header">
+                ⏰ Timer Reminders
+            </div>
+            <div class="timer-grid">
+                <div class="timer-item">
+                    <div class="timer-name">☕ Coffee</div>
+                    <div class="timer-interval">Change every 30 minutes</div>
+                </div>
+                <div class="timer-item">
+                    <div class="timer-name">🧽 Sanitizers</div>
+                    <div class="timer-interval">Refresh every 2 hours</div>
+                </div>
+                <div class="timer-item">
+                    <div class="timer-name">🥄 Pitchers/Shakers</div>
+                    <div class="timer-interval">Clean every 4 hours</div>
+                </div>
+                <div class="timer-item">
+                    <div class="timer-name">🔪 Knife/Tongs</div>
+                    <div class="timer-interval">Clean every 4 hours</div>
+                </div>
+                <div class="timer-item">
+                    <div class="timer-name">🧼 Hand Washing</div>
+                    <div class="timer-interval">Every 30 minutes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="shift-selector">
+            <button class="shift-btn active" onclick="showShift('opening')">🌅 Opening Shift</button>
+            <button class="shift-btn" onclick="showShift('midday')">☀️ Midday Operations</button>
+            <button class="shift-btn" onclick="showShift('closing')">🌙 Closing Procedures</button>
+        </div>
+
+        <!-- Opening Shift Content -->
+        <div class="shift-content active" id="opening">
+            <div class="task-sections">
+                <div class="task-section">
+                    <div class="section-header">
+                        <div class="section-icon">🔓</div>
+                        <div class="section-title">Opening Tasks</div>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Set alarm & count safe and tills</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Brew iced tea and coffee</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Run tabs on Mastrenas</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Fill sanitizers & ice bin</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Brew hot coffee</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Turn on ovens</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Set up pastry case</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Stock warming/pastry/RTD&E</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Item availability MOP</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Unlock door</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="task-section">
+                    <div class="section-header">
+                        <div class="section-icon">🌅</div>
+                        <div class="section-title">Early Morning (6-8am)</div>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">AM milk count (ASAP)</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Temperature checks (ASAP)</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Daily assessment</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Confirm order receipts</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Put away order</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Place order (by 11am)</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Run 1st breaks</div>
+                            <div class="task-time">6-7am</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Clean drains</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Pull cold brew/make kegs</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Prep backups if needed</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="task-section">
+                    <div class="section-header">
+                        <div class="section-icon">📦</div>
+                        <div class="section-title">Station Restock</div>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Ice, cups, lids, sleeves</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Sugars & sweeteners</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Straws & stoppers</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Beans (espresso bar)</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Inclusions & powders</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Syrups & sauces</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Restock fridges</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="task-section">
+                    <div class="section-header">
+                        <div class="section-icon">🧪</div>
+                        <div class="section-title">Bar Backups</div>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Whipped cream</div>
+                            <div class="task-time">24 hrs</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Sweet cream</div>
+                            <div class="task-time">48 hrs</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Lemonade</div>
+                            <div class="task-time">48 hrs</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Mocha sauce</div>
+                            <div class="task-time">24 hrs</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">White mocha</div>
+                            <div class="task-time">14 days</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Chai concentrate</div>
+                            <div class="task-time">24 hrs</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Frappuccino roast</div>
+                            <div class="task-time">48 hrs</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Iced coffee</div>
+                            <div class="task-time">12 hrs</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Iced tea</div>
+                            <div class="task-time">12 hrs</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Matcha powder</div>
+                            <div class="task-time">7 days</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Midday Content -->
+        <div class="shift-content" id="midday">
+            <div class="task-sections">
+                <div class="task-section">
+                    <div class="section-header">
+                        <div class="section-icon">☀️</div>
+                        <div class="section-title">Midday Tasks</div>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Temperature checks</div>
+                            <div class="task-time">11am-2pm</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Run breaks</div>
+                            <div class="task-time">2pm</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Run breaks & lunches</div>
+                            <div class="task-time">4pm</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">3 hour pull</div>
+                            <div class="task-time">After 4pm</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="task-section">
+                    <div class="section-header">
+                        <div class="section-icon">🧹</div>
+                        <div class="section-title">Maintenance Tasks</div>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Clean ovens</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Break down hot bar</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Tabs on Mastrenas</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Break down cold bar</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Wash pitcher rinsers & bar sinks</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Clean bathrooms</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Stock bar backups</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Trash run</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="task-section">
+                    <div class="section-header">
+                        <div class="section-icon">🧽</div>
+                        <div class="section-title">When Idle</div>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Wipe down stations</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Change trashes</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Lobby slide</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Sanitize high touch areas</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Spot sweep lobby</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Check dates for expiring items</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Wipe down fridges</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Wipe down plexiglass</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Check bathrooms</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Closing Content -->
+        <div class="shift-content" id="closing">
+            <div class="task-sections">
+                <div class="task-section">
+                    <div class="section-header">
+                        <div class="section-icon">🌆</div>
+                        <div class="section-title">Late Afternoon</div>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Last breaks</div>
+                            <div class="task-time">6pm</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Prepare BOH for order delivery</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">PM milk count (before order arrives)</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Accept order in IMS</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Drop & count till</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Drop tips</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Updates/storewalk in DRB</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Temperature checks</div>
+                            <div class="task-time">7pm</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="task-section">
+                    <div class="section-header">
+                        <div class="section-icon">🧹</div>
+                        <div class="section-title">Cleaning Tasks</div>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Sweep/mop lobby & FOH</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Break down pastry case</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Break down one Mastrena</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Fill donations bag (expired food)</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Ensure backups prepped/stocked</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Sweep/mop BOH</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Station restock</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="task-section">
+                    <div class="section-header">
+                        <div class="section-icon">🔒</div>
+                        <div class="section-title">Final Close</div>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Even out remaining tills</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Finalize deposit</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Finalize safe count</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Set alarm & lock doors</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Empty coffee & tea</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Empty ice bins</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Empty, clean, & fill espresso hoppers</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Rinse urns</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Finish remaining dishes</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Run tabs & turn off Mastrenas</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Turn off ovens</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Dump partner beverages</div>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                            <div class="task-text">Turn off lights & music</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Recipes Button -->
+    <a href="index.html" class="back-to-recipes" title="Back to Recipes">☕</a>
+
+    <script>
+        // Task completion functionality
+        function toggleTask(checkbox) {
+            checkbox.classList.toggle('checked');
+            const taskItem = checkbox.parentElement;
+            taskItem.classList.toggle('completed');
+            updateProgress();
+            
+            // Add some visual feedback
+            if (checkbox.classList.contains('checked')) {
+                checkbox.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    checkbox.style.transform = 'scale(1)';
+                }, 200);
+            }
+        }
+
+        // Shift navigation
+        function showShift(shiftName) {
+            // Hide all shift contents
+            document.querySelectorAll('.shift-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.shift-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected shift content
+            document.getElementById(shiftName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Update progress for current shift
+            updateProgress();
+        }
+
+        // Progress tracking
+        function updateProgress() {
+            const activeShift = document.querySelector('.shift-content.active');
+            const allTasks = activeShift.querySelectorAll('.task-checkbox');
+            const completedTasks = activeShift.querySelectorAll('.task-checkbox.checked');
+            
+            const percentage = allTasks.length > 0 ? Math.round((completedTasks.length / allTasks.length) * 100) : 0;
+            
+            // Update progress bar
+            document.getElementById('overallProgress').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = percentage + '% Complete';
+            
+            // Update stats
+            document.getElementById('totalTasks').textContent = allTasks.length;
+            document.getElementById('completedTasks').textContent = completedTasks.length;
+            document.getElementById('remainingTasks').textContent = allTasks.length - completedTasks.length;
+            
+            // Add celebration effect for 100% completion
+            if (percentage === 100) {
+                celebrateCompletion();
+            }
+        }
+
+        // Celebration effect
+        function celebrateCompletion() {
+            const progressSection = document.querySelector('.progress-section');
+            progressSection.style.background = 'linear-gradient(135deg, #e8f5e9, #c8e6c9)';
+            progressSection.style.transform = 'scale(1.02)';
+            
+            setTimeout(() => {
+                progressSection.style.background = 'rgba(255,255,255,0.95)';
+                progressSection.style.transform = 'scale(1)';
+            }, 1000);
+            
+            // Show completion message
+            const progressText = document.getElementById('progressText');
+            const originalText = progressText.textContent;
+            progressText.textContent = '🎉 Shift Complete! Great Job! 🎉';
+            progressText.style.color = '#2e7d32';
+            
+            setTimeout(() => {
+                progressText.textContent = originalText;
+                progressText.style.color = '#006241';
+            }, 3000);
+        }
+
+        // In-memory progress storage (session-based)
+        let taskProgress = {};
+
+        // Save progress to memory
+        function saveProgress() {
+            taskProgress = {};
+            document.querySelectorAll('.task-checkbox.checked').forEach((checkbox, index) => {
+                const taskText = checkbox.nextElementSibling.textContent.trim();
+                taskProgress[taskText] = true;
+            });
+        }
+
+        // Load progress from memory
+        function loadProgress() {
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                const taskText = checkbox.nextElementSibling.textContent.trim();
+                if (taskProgress[taskText]) {
+                    checkbox.classList.add('checked');
+                    checkbox.parentElement.classList.add('completed');
+                }
+            });
+            updateProgress();
+        }
+
+        // Auto-save progress when tasks are toggled
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('task-checkbox')) {
+                setTimeout(saveProgress, 100); // Small delay to ensure state is updated
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+            updateProgress();
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === '1') showShift('opening');
+                if (e.key === '2') showShift('midday');
+                if (e.key === '3') showShift('closing');
+            });
+        });
+
+        // Reset progress button (can be added to UI if needed)
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all task progress?')) {
+                document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                    checkbox.classList.remove('checked');
+                    checkbox.parentElement.classList.remove('completed');
+                });
+                taskProgress = {}; // Clear in-memory storage
+                updateProgress();
+            }
+        }
+
+        // Print functionality for shift checklists
+        function printShift() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
